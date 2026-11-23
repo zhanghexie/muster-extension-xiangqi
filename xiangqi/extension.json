@@ -1,0 +1,47 @@
+{
+  "id": "xiangqi",
+  "name": "中国象棋",
+  "version": "1.0.0",
+  "description": "楚河汉界：木质棋盘、离线人机对弈与双人同屏，自动续弈。",
+  "icon": "builtin-extension:games",
+  "scope": "global",
+  "surface": { "kind": "sidebar", "entry": "ui/panel.html", "title": "中国象棋" },
+  "data": { "workspace": true, "shared": false },
+  "permissions": ["data", "theme"],
+  "domain": {
+    "entry": "domain.mjs",
+    "queries": ["game.hint"],
+    "commands": ["game.move", "game.undo", "game.new", "game.settings"],
+    "events": ["state.changed"],
+    "queryDefs": [
+      { "id": "game.hint", "title": "计算当前局面的走棋提示", "permission": "read", "parameters": { "type": "object", "additionalProperties": false } }
+    ],
+    "commandDefs": [
+      {
+        "id": "game.move", "title": "走棋", "permission": "edit",
+        "parameters": {
+          "type": "object", "additionalProperties": false, "required": ["from", "to", "expected"],
+          "properties": { "from": { "type": "integer", "minimum": 0, "maximum": 89 }, "to": { "type": "integer", "minimum": 0, "maximum": 89 }, "expected": { "type": "integer", "minimum": 0 } }
+        }
+      },
+      {
+        "id": "game.undo", "title": "悔棋", "permission": "edit",
+        "parameters": { "type": "object", "additionalProperties": false, "required": ["expected"], "properties": { "expected": { "type": "integer", "minimum": 0 } } }
+      },
+      {
+        "id": "game.new", "title": "开始新局", "permission": "edit",
+        "parameters": {
+          "type": "object", "additionalProperties": false, "required": ["mode", "expected"],
+          "properties": { "mode": { "enum": ["computer", "local"] }, "expected": { "type": "integer", "minimum": 0 } }
+        }
+      },
+      {
+        "id": "game.settings", "title": "调整棋局设置", "permission": "edit",
+        "parameters": {
+          "type": "object", "additionalProperties": false, "required": ["expected"],
+          "properties": { "level": { "enum": ["quiet", "strong"] }, "flipped": { "type": "boolean" }, "expected": { "type": "integer", "minimum": 0 } }
+        }
+      }
+    ]
+  }
+}

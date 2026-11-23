@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>中国象棋 · 楚河汉界</title>
+  <link rel="stylesheet" href="../__sdk__/theme.css">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="../__sdk__/sdk.js" defer></script>
+  <script src="./panel.mjs" type="module"></script>
+</head>
+<body>
+  <main class="table-shell" lang="zh-CN">
+    <header class="masthead">
+      <p class="edition">案上弈局 <span aria-hidden="true">/</span> <span lang="en">XIANGQI</span></p>
+      <h1>楚河汉界</h1>
+      <p class="masthead-note">中国象棋 <span aria-hidden="true">·</span> 方寸之间，自有天地</p>
+      <span class="seal" aria-hidden="true">弈</span>
+    </header>
+
+    <div class="table-layout">
+      <section class="stage" aria-label="对弈">
+        <div class="turn-bar">
+          <div class="turn-label" id="turn-label"><span class="turn-dot" aria-hidden="true"></span><strong id="turn" role="status">正铺开棋盘…</strong></div>
+          <span class="turn-round" id="round">第 01 回合</span>
+        </div>
+
+        <div class="seat" id="seat-top"></div>
+        <div class="board-frame" id="board-frame">
+          <div class="ruler" id="ruler-top" aria-hidden="true"></div>
+          <div class="board">
+            <svg class="board-ink" viewBox="0 0 900 1000" aria-hidden="true" focusable="false">
+              <defs>
+                <g id="mark-right"><path d="M10 -26v16h16m-16 36V10h16"/></g>
+                <g id="mark-left"><path d="M-10 -26v16h-16m16 36V10h-16"/></g>
+                <g id="mark"><use href="#mark-left"/><use href="#mark-right"/></g>
+              </defs>
+              <g class="lattice">
+                <rect class="outer-rule" x="39" y="39" width="822" height="922"/>
+                <path d="M50 50H850V950H50Z M50 150H850 M50 250H850 M50 350H850 M50 450H850 M50 550H850 M50 650H850 M50 750H850 M50 850H850"/>
+                <path d="M150 50V450m0 100v400 M250 50V450m0 100v400 M350 50V450m0 100v400 M450 50V450m0 100v400 M550 50V450m0 100v400 M650 50V450m0 100v400 M750 50V450m0 100v400"/>
+                <path class="palace" d="M350 50l200 200m0-200L350 250m0 500l200 200m0-200L350 950"/>
+                <g class="point-marks">
+                  <use href="#mark" x="150" y="250"/><use href="#mark" x="750" y="250"/>
+                  <use href="#mark-right" x="50" y="350"/><use href="#mark" x="250" y="350"/><use href="#mark" x="450" y="350"/><use href="#mark" x="650" y="350"/><use href="#mark-left" x="850" y="350"/>
+                  <use href="#mark-right" x="50" y="650"/><use href="#mark" x="250" y="650"/><use href="#mark" x="450" y="650"/><use href="#mark" x="650" y="650"/><use href="#mark-left" x="850" y="650"/>
+                  <use href="#mark" x="150" y="750"/><use href="#mark" x="750" y="750"/>
+                </g>
+              </g>
+              <g class="river">
+                <path d="M389 498h43l18-13 18 13h43m-95 13h20l14 10 14-10h20"/>
+                <text x="235" y="525">楚河</text><text x="670" y="525">漢界</text>
+              </g>
+            </svg>
+            <div class="board-grid" id="board" role="grid" aria-label="中国象棋棋盘" aria-describedby="board-help" aria-rowcount="10" aria-colcount="9" aria-disabled="true"></div>
+          </div>
+          <div class="ruler" id="ruler-bottom" aria-hidden="true"></div>
+        </div>
+        <div class="seat" id="seat-bottom"></div>
+
+        <div class="tools" role="group" aria-label="棋局操作">
+          <button class="tool" id="undo" type="button" disabled><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 5-4 4 4 4m-4-4h9a4 4 0 0 1 0 8h-2"/></svg>悔棋</button>
+          <button class="tool" id="hint" type="button" disabled><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5 12 8l5.5 2-5.5 2-2 5.5-2-5.5-5.5-2L8 8z"/></svg>提示</button>
+          <button class="tool" id="flip" type="button" aria-pressed="false" disabled><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13 4H5v5m0-5 3 3m-1 9h8v-5m0 5-3-3M3 13h4m6-6h4"/></svg>翻转</button>
+          <button class="tool primary" id="new-game" type="button" disabled><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>新局</button>
+        </div>
+        <p class="board-help" id="board-help">点击棋子再选落点。键盘可用方向键移动，回车落子。</p>
+        <p class="message" id="message" role="status" hidden></p>
+        <div class="failure" id="failure" role="alert" hidden>
+          <span id="failure-text"></span><button class="tool" id="retry" type="button">重试读取</button>
+        </div>
+      </section>
+
+      <aside class="ledger" aria-label="棋局与棋谱">
+        <section class="ledger-card">
+          <div class="card-heading"><h2>对弈</h2><span class="local-label">离线</span></div>
+          <div class="segments" role="group" aria-label="对弈方式">
+            <button type="button" data-mode="computer" aria-pressed="true" disabled>人机对弈</button>
+            <button type="button" data-mode="local" aria-pressed="false" disabled>双人同屏</button>
+          </div>
+          <p class="mode-note" id="mode-note">你执红先行，电脑执黑。</p>
+          <div class="level" id="level">
+            <span>棋力</span>
+            <div class="segments" role="group" aria-label="电脑棋力">
+              <button type="button" data-level="quiet" aria-pressed="true" disabled>初弈</button>
+              <button type="button" data-level="strong" aria-pressed="false" disabled>进阶</button>
+            </div>
+          </div>
+        </section>
+        <section class="ledger-card record">
+          <div class="card-heading"><h2>棋谱</h2><span id="move-count">0 着</span></div>
+          <p class="record-empty" id="record-empty">落下第一着，棋谱从这里开始。</p>
+          <div id="record-body" hidden>
+            <div class="record-head" aria-hidden="true"><span>回合</span><span>红方</span><span>黑方</span></div>
+            <ol class="moves" id="moves" aria-label="最近棋谱"></ol>
+          </div>
+          <p class="save-note" id="save-note"><span aria-hidden="true"></span><span id="save-text">对局自动保存到当前工作区</span></p>
+        </section>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
